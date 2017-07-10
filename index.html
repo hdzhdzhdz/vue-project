@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>vue-project</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        {{ message }}
+    </div>
+    <div id="app-2">
+        <span v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+        </span>
+    </div>
+    <div id="app-3">
+        <p v-if="seen">现在你看到我了</p>
+    </div>
+    <div id="app-4">
+        <ol>
+            <li v-for="todo in todos">
+                {{ todo.text }}
+            </li>
+        </ol>
+    </div>
+    <div id="app-5">
+        <p>{{ message }}</p>
+        <button v-on:click="reverseMessage">逆转消息</button>
+    </div>
+    <div id="app-6">
+        <p>{{ message }}</p>
+        <input v-model="message">
+    </div>
+    <div id="app-7">
+        <ol>
+            <!--
+            现在我们为每个 todo-item 提供待办项对象
+            待办项对象是变量，即其内容可以是动态的。
+            我们也需要为每一个组件提供一个"key"，晚些时候我们会做个解释。
+            -->
+            <todo-item v-for="item in groceryList"
+                v-bind:todo="item"
+                v-bind:key="item.id"
+            ></todo-item>
+        </ol>
+    </div>
+    <div id="example">
+        <p>Original message: "{{ message }}"</p>
+        <p>Computed reversed message: "{{ reversedMessage }}"</p>
+    </div>
+    <div id="demo">{{ fullName }}</div>
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question
+            <input v-model="question">
+        </p>
+        <p>{{ answer }}</p>
+    </div>
+    <div id="style-example">
+        <p v-bind:style="styleObject">style-example</p>
+    </div>
+    <ul id="example-1">
+        <li v-for="item in items">
+            {{ item.message }}
+        </li>
+    </ul>
+    <ul id="example-2">
+        <li v-for="(item, index) in items">
+            {{ parentMessage }} - {{ index }} - {{ item.message }}
+        </li>
+    </ul>
+    <ul id="repeat-object" class="demo">
+        <li v-for="value, key, index in object">
+            {{ index }} : {{ key }} : {{ value }}
+        </li>
+    </ul>
+    <div id='num'>
+<!--        <li v-for="n in evenNumbers">{{ n }}</li>-->
+       <li v-for="n in even(numbers)">{{ n }}</li>
+    </div>
+    <div id="todo-list-example">
+        <input v-model="newTodoText" v-on:keyup.enter="addNewTodo" placeholder="Add a todo">
+        <ul>
+            <li is="todo-item" v-for="(todo, index) in todos" v-bind:title="todo" v-on:remove="todos.splice(index, 1)"></li>
+        </ul>
+    </div>
+    <div id="example-3">
+        <button v-on:click=" counter += 1">增加1</button>
+        <p>这个按钮被点击了 {{ counter }} 次。</p>
+    </div>
+    <div id="example-4">
+        <!-- 'greet' 是在下面定义的方法名-->
+        <button v-on:click="greet">Greet</button>
+    </div>
+    <div id="example-5">
+        <button v-on:click="say('Hi')">Say hi</button>
+        <button v-on:click="say('What')">Say what</button>
+    </div>
+    <div id="example-6">
+        <button v-on:click.once.prevent="warn('Form cannot be submitted yet.', $event)">Submit</button>
+    </div>
+    <div id="example-7">
+        <input v-model="message" placeholder="edit me">
+        <p>Message is:{{ message }}</p>
+    </div>
+    <div id="example-8">
+        <span>Multiline message is:</span>
+        <p style="white-space: pre-line">{{ message }}</p>
+        <br>
+        <textarea v-model="message" placeholder="add multiple lines"></textarea>
+    </div>
+    <div id="example-9">
+        <input type="checkbox" id="checkbox" v-model="checked">
+        <label for="checkbox">{{ checked }}</label>
+    </div>
+    <div id="example-10">
+        <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+        <label for="jack">Jack</label>
+        <input type="checkbox" id="jonh" value="John" v-model="checkedNames">
+        <label for="john">John</label>
+        <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+        <label for="mike">Mike</label>
+        <br>
+        <span>Checked names: {{ checkedNames }}</span>
+    </div>
+    <div id="example-11">
+        <input type="radio" id="one" value="One" v-model="picked">
+        <label for="one">One</label>
+        <br>
+        <input type="radio" id="two" value="Two" v-model="picked">
+        <label for="two">Two</label>
+        <br>
+        <span>Picked: {{ picked }}</span>
+    </div>
+    <div id="example-12">
+        <select v-model="selected" multiple style="width:50px">
+<!--            <option disabled value="">请选择</option>-->
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+        </select>
+        <span>Selected: {{ selected }}</span>
+    </div>
+    <div id="example-13">
+        <my-component></my-component>
+    </div>
+    <div id="example-14">
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+    </div>
+    <div id="counter-event-example">
+        <p>{{ total }}</p>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+    </div>
+    <div id="currency-input-example">
+        <currency-input v-model="price"></currency-input>
+    </div>
+    
+    
+    
+    
+    
+    
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue'
+            }
+        })
+        var app2 = new Vue({
+            el: '#app-2',
+            data :{
+                message: '页面加载于' +new Date()
+            }
+        })
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                seen: true
+//                seen: false
+            }
+        })
+        var app4 = new Vue({
+            el: '#app-4',
+            data: {
+                todos: [
+                    { text: '学习 JavaScript' },
+                    { text: '学习 Vue' },
+                    { text: '整个牛项目' }
+                ]
+            }
+        })
+        var app5 = new Vue({
+            el: '#app-5',
+            data: {
+                message: 'Hello Vue.js!'
+            },
+            methods: {
+                reverseMessage: function(){
+                    this.message = this.message.split('').reverse().join('')
+                }
+            }
+        })
+        var app6 = new Vue({
+            el: '#app-6',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+        Vue.component('todo-item', {
+            // todo-item 组件现在接受一个
+            // "prop"，类似于一个自定义属性
+            // 这个属性名为 todo。
+            props: ['todo'],
+            template: '<li>{{ todo.text }}</li>'
+        })
+        var app7 = new Vue({
+            el: "#app-7",
+            data: {
+                groceryList: [
+                    { id: 0, text: '蔬菜'},
+                    { id: 1, text: '奶酪'},
+                    { id: 2, text: '随便其他什么人吃的东西'}
+                ]
+            }
+        })
+        var vm = new Vue({
+            el: '#example',
+            data: {
+              message: 'Hello'  
+            },
+            computed: {
+                // a computed getter
+                reversedMessage: function(){
+                    // this points to the vm instance
+                    return this.message.split('').reverse().join('')
+                }
+            }
+        })
+//        var vm = new Vue({
+//            el: '#demo',
+//            data: {
+//                firstName: 'Foo',
+//                lastName: 'Bar',
+//                fullName: 'Foo Bar'
+//            },
+//            watch: {
+//                firstName: function (val) {
+//                    this.fullName = val + ' ' + this.lastName
+//                },
+//                lastName: function (val) {
+//                    this.fullName = this.firstName + ' ' + val
+//                }
+//            }
+//        })
+        var vm = new Vue({
+            el: '#demo',
+            data: {
+                firstName: 'Foo',
+                lastName: 'Bar'
+            },
+            computed: {
+//                fullName: function () {
+//                    return this.firstName + ' ' + this.lastName
+                    fullName: {
+                        get: function(){
+                            return this.firstName + ' ' + this.lastName
+                        },
+                        //setter
+                        set: function (newValue) {
+                            var names = newValue.split(' ')
+                            this.forstName = names[0]
+                            this.lastName =  names[names.length - 1]
+                        }
+                    }
+                }
+        })
+        var styleExample = new Vue({
+            el: "#style-example",
+            data: {
+                styleObject: {
+                    color: 'red',
+                    fontSize: '13px'
+                }
+            }
+        })
+        var example1 = new Vue({
+            el: '#example-1',
+            data: {
+                items: [
+                    { message: 'Foo' },
+                    { message: 'Bar' }
+                ]
+            }
+        })
+        var example2 = new Vue({
+            el: '#example-2',
+            data: {
+                parentMessage: 'Parent',
+                items: [
+                    { message: 'Foo' },
+                    { message: 'Bar' }
+                ]
+            }
+        })
+        new Vue({
+            el: '#repeat-object',
+            data: {
+                object: {
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    age: 30
+                }
+            }
+        })
+        new Vue({
+            el: '#num',
+            data: {
+                numbers: [ 1,2,3,4,5,6 ]
+            },
+//            computed: {
+//                evenNumbers: function () {
+//                    return this.numbers.filter(function (number) {
+//                        return number % 2 === 0
+//                    })
+//                }
+//            }
+            methods: {
+                even: function (numbers) {
+                    return numbers.filter(function (number) {
+                        return number % 2 === 0
+                    })
+                }
+            }
+        })
+        Vue.component('todo-item', {
+            template:`
+            <li>
+                {{ title }}
+                <button v-on:click="$emit('remove')">X</button>
+            </li>
+            
+            `,
+        props: ['title']
+        })
+        
+        new Vue({
+            el: '#todo-list-example',
+            data: {
+                newTodoText: '',
+                todos: [
+                    'Do the dishes',
+                    'Take out the trash',
+                    'Mow the lawn'
+                ]
+            },
+            methods: {
+                addNewTodo: function () {
+                    this.todos.push(this.newTodoText)
+                    this.newTodoText = ''
+                }
+            }
+        })
+        var example3 = new Vue({
+            el: '#example-3',
+            data: {
+                counter: 0
+            }
+        })
+        var example4 = new Vue({
+            el: '#example-4',
+            data: {
+                name: 'Vue.js'
+            },
+            // 在 'methods' 对象中定义方法
+            methods: {
+                greet: function(event) {
+                    // 'this' 在方法里指当前Vue实例
+                    alert('Hello' + this.name + '!')
+                    // 'event' 是原生DOM事件
+                    if(event){
+                        alert(event.target.tagName)
+                    }
+                }
+            }
+        })
+        var example5 = new Vue({
+            el: '#example-5',
+            methods: {
+                say: function (message) {
+                    alert(message)
+                }
+            }
+        })
+        var example6 = new Vue({
+            el: '#example-6',
+            methods: {
+                warn: function (message, event) {
+                    //　现在我们可以访问原生事件对象
+//                    if (event) event.preventDefault()
+                    alert(message)
+                }
+            }
+        })
+        var example7 = new Vue({
+            el: '#example-7',
+            data: {
+                message: ''
+            }
+        })
+        var example8 = new Vue({
+            el: '#example-8',
+            data: {
+                message: ''
+            }
+        })
+        var example9 = new Vue({
+            el: '#example-9',
+            data: {
+                checked: ''
+            }
+        })
+        var example10 = new Vue({
+            el: '#example-10',
+            data: {
+                checkedNames: []
+            }
+        })
+        var example11 = new Vue({
+            el: '#example-11',
+            data: {
+                picked: []
+            }
+        })
+        var example12 = new Vue({
+            el: '#example-12',
+            data: {
+                selected: []
+            }
+        })
+        //　注册
+        Vue.component('my-component', {
+            template: '<div>A custom component!</div>'
+        })
+        //　创建根实例
+        new Vue({
+            el: "#example-13"
+        })
+        var data = { counter: 0 }
+        
+        Vue.component('simple-counter', {
+            template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+            //　技术上　data　的确是一个函数了，因此Vue　不会警告
+            //　但是我们返回给每个组件的实例却引用了同一个data对象
+            data: function() {
+                return {
+                    counter: 0
+                }
+            }
+        })
+        var example14 = new Vue({
+            el: '#example-14'
+        })
+        Vue.component('button-counter', {
+            template: '<button v-on:click="increment">{{ counter }}</button>',
+            data: function () {
+                return{
+                    counter: 0
+                }
+            },
+            methods: {
+                increment: function () {
+                    this.counter += 1
+                    this.$emit('increment')
+                }
+            },
+        })
+        
+        new Vue({
+            el: '#counter-event-example',
+            data: {
+                total: 0
+            },
+            methods: {
+                incrementTotal: function () {
+                    this.total += 1
+                }
+            }
+        })
+        
+        Vue.component('currency-input', {
+            template: '\
+    <span>\
+      $\
+      <input\
+        ref="input"\
+        v-bind:value="value"\
+        v-on:input="updateValue($event.target.value)"\
+      >\
+    </span>\
+            ',
+            props: ['value'],
+            methods: {
+                // 不是直接更新值，而是使用此方法来对输入值进行格式化和位数限制
+                updateValue: function(value){
+                    var formattedValue = value
+                    // 删除两侧的空格符
+                    .trim()
+                    // 保留 2 小数位
+                    .slice(
+            0,
+            value.indexOf('.') === -1 
+                    ? value.length 
+                        : value.indexOf('.') + 3
+                    )
+                    // 如果值不统一，手动覆盖以保持一致
+                    if (formattedValue !== value) {
+                        this.$refs.input.value = formattedValue
+                    }
+                    // 通过 input 事件发出数值
+                      this.$emit('input' , Number(formattedValue))
+                }
+            }
+        })
+        new Vue({
+            el: '#currency-input-example',
+            data: {
+                price: '' 
+            }
+        })
+    </script>
+    <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
+    <script>
+        var watchExampleVM = new Vue({
+            el: '#watch-example',
+            data: {
+                question: '',
+                answer: 'I cannot give you an answer until you ask a question!'
+            },
+            watch: {
+                // 如果 question 发生改变，这个函数就会运行
+                question: function (newQuestion) {
+                this.answer = 'Waiting for you to stop typing...'
+                this.getAnswer()
+                }
+            },
+            methods: {
+                // _.debounce 是一个通过 lodash 限制操作频率的函数。
+                // 在这个例子中，我们希望限制访问yesno.wtf/api的频率
+                // ajax请求直到用户输入完毕才会发出
+                // 学习更多关于 _.debounce function (and its cousin
+                // _.throttle), 参考: https://lodash.com/docs#debounce
+                getAnswer: _.debounce(
+                    function () {
+                        if (this.question.indexOf('?') === -1) {
+                            this.answer = 'Questions usually contain a question mark. ;-)'
+                            return
+                        }
+                        this.answer = 'Thinking...'
+                        var vm = this
+                        axios.get('https://yesno.wtf/api').then(function (response) {
+                            vm.answer = _.capitalize(response.data.answer)
+                        }).catch(function (error) {
+                            vm.answer = 'Error! Could not reach the API. ' + error
+                        })
+                    },
+                    // 这是我们为用户停止输入等待的毫秒数
+                        500
+                )
+            }
+        })
+    </script>
+</body>
+</html>
